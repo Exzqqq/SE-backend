@@ -4,6 +4,9 @@ import {
   addStock,
   updateStock,
   getStockByDrugId,
+  getStockByStockId,
+  getTopSellingStocks,
+  getTotalSoldDrugs,
 } from "../controllers/StockController";
 
 import {
@@ -12,24 +15,23 @@ import {
   getDrugById,
   updateDrug,
   deleteDrug,
-  getTopDrugs,
 } from "../controllers/DrugController";
 
 import {
   createBill,
-  getBillById,
-  removeBill,
-  updateBill,
+  listBills,
+  removeBillItem,
+  confirm,
   history,
   dashboard,
+  getBillInfo,
 } from "../controllers/BillController";
 
 import {
-  getAllExpenses,
   createExpense,
-  deleteExpense,
+  getAllExpenses,
   updateExpense,
-  getExpenseById,
+  deleteExpense,
 } from "../controllers/expenseController";
 
 import dotenv from "dotenv";
@@ -41,30 +43,33 @@ router.get("/stocks", getAllStock);
 router.post("/stocks", addStock);
 router.put("/stocks/:id", updateStock);
 router.get("/stocks/drug/:drug_id", getStockByDrugId);
+router.get("/stocks/drugs/:stock_id", getStockByStockId);
+router.get("/stocks/top-selling", getTopSellingStocks);
+router.get("/stocks/totalsell", getTotalSoldDrugs);
 
 router.get("/drugs", getAllDrugs);
 router.get("/drugs/:id", getDrugById);
 router.post("/drugs", addDrug);
 router.put("/drugs/:id", updateDrug);
 router.delete("/drugs/:id", deleteDrug);
-router.get("/drugs/top", (req, res) => {
-  console.log("Top drugs route hit");
-  res.send("Top drugs route");
-});
+// router.get("/drugs/top", getTopDrugs);
+// router.get("/drugs/search", searchDrugs);
 
 // Bill routes
 router.post("/bill/create", createBill);
-router.get("/bill/:bill_id", getBillById);
-router.delete("/bill/remove/:id", removeBill);
-router.put("/bill/update/:id", updateBill);
+router.get("/bill/list", listBills);
+router.delete("/bill/remove/:id", removeBillItem);
+router.post("/bill/confirm", confirm);
 router.get("/bill/history", history);
 router.get("/bill/dashboard/:year", dashboard);
+router.get("/sell/info/:bill_id", getBillInfo);
 
-router.get("/expense", getAllExpenses);
+//expense
+// router.get("/expense/:page/:searchQuery?", getAllExpenses);
+router.get("/expense/:page/:day?/:month?/:year?", getAllExpenses);
 router.post("/expense/create", createExpense);
-router.delete("/expense/remove/:id", deleteExpense);
 router.put("/expense/update/:id", updateExpense);
-router.get("/expense/:id", getExpenseById);
+router.delete("/expense/remove/:id", deleteExpense);
 
 router.get("/", (req: Request, res: Response) => {
   res.send("Hello World");

@@ -1,14 +1,36 @@
 import { Request, Response } from "express";
 import pool from "../config/database";
 
-// Get all drugs
 export const getAllDrugs = async (req: Request, res: Response) => {
+  const client = await pool.connect();
   try {
-    const result = await pool.query("SELECT * FROM drugs");
+    const query = `
+      SELECT 
+        drug_id,
+        name,
+        code,
+        detail,
+        usage,
+        slang_food,
+        side_effect,
+        drug_type,
+        unit_type,
+        price,
+        created_at,
+        updated_at
+      FROM drugs
+      ORDER BY drug_id ASC
+    `;
+
+    const result = await client.query(query);
+
+    // Return all rows instead of just the first one
     res.status(200).json(result.rows);
   } catch (error) {
     console.error("Error fetching drugs:", error);
     res.status(500).json({ error: "Failed to fetch drugs" });
+  } finally {
+    client.release();
   }
 };
 
@@ -144,20 +166,4 @@ export const deleteDrug = async (
   }
 };
 
-// Get top 5 most selling drugs
-export const getTopDrugs = async (req: Request, res: Response) => {
-  console.log("Fetching top drugs");
-  try {
-    const result = await pool.query(
-      "SELECT * FROM drugs ORDER BY sold_count DESC LIMIT 5"
-    );
-    
-    // Log the result rows to check what data is returned
-    console.log(result.rows);
-    
-    res.status(200).json(result.rows);
-  } catch (error) {
-    console.error("Error fetching top drugs:", error);
-    res.status(500).json({ error: "Failed to fetch top drugs" });
-  }
-};
+
